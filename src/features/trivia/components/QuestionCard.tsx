@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import { submitAnswer as submitAnswerApi } from "../api/triviaApi";
 
@@ -8,7 +8,8 @@ interface QuestionCardProps {
   question_type: string;
   questionId: number;
   timePerQuestion: number;
-  onNextQuestion: () => Promise<void>; // Simplified callback
+  onNextQuestion: () => Promise<void>;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({
@@ -18,18 +19,25 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   timePerQuestion,
   onNextQuestion,
   question_type,
+  setScore,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [timeLeft, setTimeLeft] = useState<number>(timePerQuestion);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const { session } = useTriviaSession();
+
+  const selectedIndexRef = useRef<number>(-1);
+  const hasSubmittedRef = useRef<boolean>(false);
 
   // Timer effect
   useEffect(() => {
     setTimeLeft(timePerQuestion);
     setSelectedIndex(-1);
+    selectedIndexRef.current = -1;
+    hasSubmittedRef.current = false;
     setIsSubmitting(false);
-    console.log("Question type : ", question_type)
+    console.log("Question type: ", question_type)
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -46,17 +54,26 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   }, [question, timePerQuestion]);
 
   const handleOptionClick = (index: number) => {
-    if (timeLeft <= 0 || isSubmitting) return;
+    if (timeLeft <= 0 || isSubmitting || hasSubmittedRef.current) return;
     setSelectedIndex(index);
+    selectedIndexRef.current = index;
   };
 
   const submitAnswer = async () => {
-    if (isSubmitting) return;
+    if (hasSubmittedRef.current) return;
+    hasSubmittedRef.current = true;
 
     setIsSubmitting(true);
     try {
       if (session.sessionId != null) {
-        await submitAnswerApi(session.sessionId, questionId, selectedIndex);
+        const response = await submitAnswerApi(
+          session.sessionId,
+          questionId,
+          selectedIndexRef.current
+        );
+        if (response.is_correct) {
+          setScore((prevScore: number) => prevScore + 1);
+        }
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -72,7 +89,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   const getOptionClasses = (index: number) => {
     let baseClasses = "p-3 mb-2 rounded-lg transition-colors";
 
-    if (timeLeft > 0 && !isSubmitting) {
+    if (timeLeft > 0 && !isSubmitting && !hasSubmittedRef.current) {
       baseClasses += " cursor-pointer";
       if (selectedIndex === index) {
         baseClasses += " bg-blue-600 text-white";
@@ -108,6 +125,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           style={{ width: `${(timeLeft / timePerQuestion) * 100}%` }}
         />
       </div>
+
       <div className="flex justify-between mt-2 text-sm text-gray-600">
         <span>Time left: {timeLeft}s</span>
         {isSubmitting && <span>Submitting...</span>}

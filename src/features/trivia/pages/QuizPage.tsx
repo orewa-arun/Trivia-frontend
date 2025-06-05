@@ -19,6 +19,7 @@ const QuizPage = () => {
   const [questionCount, setQuestionCount] = useState(0);
   const questionLimit = 10; // Limit for the number of questions
   const timePerQuestion = 10; // Default time per question
+  const [score, setScore] = useState(0);
 
   // Fetch initial question
   useEffect(() => {
@@ -40,7 +41,7 @@ const QuizPage = () => {
     try {
       const response = await getNextQuestion(session.sessionId!);
 
-      console.log(response)
+      console.log(response);
 
       const currentQuestion = {
         id: response.id,
@@ -84,14 +85,18 @@ const QuizPage = () => {
   }
 
   return (
-    <QuestionCard
-      question={currentQuestion.question}
-      options={currentQuestion.options}
-      questionId={currentQuestion.id}
-      question_type={currentQuestion.question_type}
-      timePerQuestion={timePerQuestion}
-      onNextQuestion={handleNextQuestion}
-    />
+    <div>
+      <QuestionCard
+        question={currentQuestion.question}
+        options={currentQuestion.options}
+        questionId={currentQuestion.id}
+        question_type={currentQuestion.question_type}
+        timePerQuestion={timePerQuestion}
+        onNextQuestion={handleNextQuestion}
+        setScore={setScore}
+      />
+      <div>Your score: {score}</div>
+    </div>
   );
 };
 
