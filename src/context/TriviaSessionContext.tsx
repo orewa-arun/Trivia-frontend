@@ -20,7 +20,6 @@ const TriviaSessionContext = createContext<
 export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-
   // Load initial state from localStorage (if exists)
   const loadFromLocalStorage = (): TriviaSession => {
     const saved = localStorage.getItem("triviaSession");
@@ -40,10 +39,7 @@ export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.setItem("triviaSession", JSON.stringify(session));
   }, [session]);
 
-  const startNewSession = (
-    sessionId: number,
-    guestName: string
-  ) => {
+  const startNewSession = (sessionId: number, guestName: string) => {
     const newSession = {
       ...session,
       sessionId,
@@ -56,6 +52,8 @@ export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
   const endCurrentSession = () => {
     setSession((prev) => ({
       ...prev,
+      sessionId: null,
+      guestName: "Guest User",
       isSessionActive: false,
     }));
   };

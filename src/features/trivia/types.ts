@@ -1,6 +1,7 @@
-export type MCQQuestion = {
+export type Question = {
   id: number;
   question: string;
   options: string[];
-  correctAnswer: string;
+  question_type: string;
+  category: string;
 };

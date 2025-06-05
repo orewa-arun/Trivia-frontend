@@ -10,7 +10,6 @@ const NameInput = () => {
   const navigate = useNavigate();
   const { startNewSession } = useTriviaSession();
 
-
   useEffect(() => {
     if (submitted) return;
     if (secondsLeft <= 0) {
@@ -25,7 +24,6 @@ const NameInput = () => {
     return () => clearTimeout(timer);
   }, [secondsLeft, submitted]);
 
-
   const startAndSaveSession = async () => {
     try {
       const response = await startSession("guest", name || "Guest User");
@@ -35,13 +33,11 @@ const NameInput = () => {
     }
   };
 
-
   const handleSubmit = async () => {
     await startAndSaveSession();
     setSubmitted(true);
     navigate("/trivia/quiz");
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50 px-4 text-center">

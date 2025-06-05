@@ -2,6 +2,7 @@ import React from "react";
 import LandingPage from "./features/trivia/components/LandingPage";
 import { Route, Routes } from "react-router-dom";
 import NameInput from "./features/trivia/components/NameInput";
+import TriviaFlow from "./features/trivia/pages/TriviaFlow";
 
 const App: React.FC = () => {
   return (
@@ -9,6 +10,7 @@ const App: React.FC = () => {
       <Routes>
         <Route index element={<LandingPage />} />
         <Route path="/trivia/name" element={<NameInput />} />
+        <Route path="/trivia/quiz" element={<TriviaFlow />} />
       </Routes>
     </div>
   );
