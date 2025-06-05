@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { startSession } from "../api/triviaApi";
+import { useTriviaSession } from "../../../context/TriviaSessionContext";
 
 const NameInput = () => {
   const [name, setName] = useState("");
-  const [secondsLeft, setSecondsLeft] = useState(20);
+  const [secondsLeft, setSecondsLeft] = useState(15);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const { startNewSession } = useTriviaSession();
 
-  // Countdown timer
+
   useEffect(() => {
     if (submitted) return;
     if (secondsLeft <= 0) {
@@ -22,15 +25,23 @@ const NameInput = () => {
     return () => clearTimeout(timer);
   }, [secondsLeft, submitted]);
 
-  const handleSubmit = () => {
-    if (!name.trim()) {
-      setName("Guest"); // default name
+
+  const startAndSaveSession = async () => {
+    try {
+      const response = await startSession("guest", name || "Guest User");
+      startNewSession(response.session_id, name || "Guest User");
+    } catch (error) {
+      console.error("Error starting session:", error);
     }
+  };
+
+
+  const handleSubmit = async () => {
+    await startAndSaveSession();
     setSubmitted(true);
-    // Optionally store the name in context or local storage
-    localStorage.setItem("trivia_username", name || "Guest");
     navigate("/trivia/quiz");
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50 px-4 text-center">
@@ -47,13 +58,6 @@ const NameInput = () => {
           onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-3 border border-blue-300 rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl shadow"
-        >
-          Continue
-        </button>
       </div>
     </div>
   );
