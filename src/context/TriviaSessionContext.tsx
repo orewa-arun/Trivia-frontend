@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import type { ReactNode } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 interface TriviaSession {
   sessionId: number | null;
@@ -11,6 +11,8 @@ interface TriviaSessionContextType {
   session: TriviaSession;
   startNewSession: (sessionId: number, guestName: string) => void;
   endCurrentSession: () => void;
+  quizPhase: string;
+  setQuizPhase: Dispatch<SetStateAction<string>>;
 }
 
 const TriviaSessionContext = createContext<
@@ -58,12 +60,16 @@ export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
+  const [quizPhase, setQuizPhase] = useState("QUIZ");
+
   return (
     <TriviaSessionContext.Provider
       value={{
         session,
         startNewSession,
         endCurrentSession,
+        quizPhase,
+        setQuizPhase,
       }}
     >
       {children}

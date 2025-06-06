@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { getNextQuestion } from "../api/triviaApi";
+import { completeSession, getNextAdQuestion } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import QuestionCard from "../components/QuestionCard";
 
-interface Question {
+interface AdQuestion {
   id: number;
   question: string;
   options: string[];
@@ -11,13 +11,15 @@ interface Question {
   category: string;
 }
 
-const QuizPage = () => {
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+const AdQuizPage = () => {
+  const [currentQuestion, setCurrentQuestion] = useState<AdQuestion | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const { session, setQuizPhase } = useTriviaSession();
+  const { session, endCurrentSession, setQuizPhase } = useTriviaSession();
   const [questionCount, setQuestionCount] = useState(0);
-  const questionLimit = 10; // Limit for the number of questions
+  const questionLimit = 2; // Limit for the number of questions
   const timePerQuestion = 10; // Default time per question
   const [score, setScore] = useState(0);
 
@@ -30,14 +32,25 @@ const QuizPage = () => {
 
   useEffect(() => {
     if (quizCompleted) {
-      setQuizPhase("AD")
+      const endSession = async () => {
+        try {
+          const response = await completeSession(session.sessionId!);
+          console.log("Session completed:", response);
+        } catch (error) {
+          console.error("Error completing session:", error);
+        }
+      };
+
+      endSession();
+      endCurrentSession();
+      setQuizPhase("LEADERBOARD");
     }
   }, [quizCompleted]);
 
   const fetchQuestion = async () => {
     setIsLoading(true);
     try {
-      const response = await getNextQuestion(session.sessionId!);
+      const response = await getNextAdQuestion(session.sessionId!);
 
       console.log(response);
 
@@ -84,7 +97,7 @@ const QuizPage = () => {
 
   return (
     <div>
-        <div>Question No : {questionCount + 1}</div>
+      <div>Question No : {questionCount + 1}</div>
       <QuestionCard
         question={currentQuestion.question}
         options={currentQuestion.options}
@@ -99,4 +112,4 @@ const QuizPage = () => {
   );
 };
 
-export default QuizPage;
+export default AdQuizPage;

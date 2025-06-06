@@ -47,3 +47,51 @@ export const submitAnswer = async (
       console.error("Error:", error);
     });
 };
+
+export const getAd = async (adId: number) => {
+  return axios
+    .post(`${API_BASE_URL}/trivia/ad?ad_id=${adId}`)
+    .then((response) => {
+      console.log("Ad Response:", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching ad:", error);
+    });
+};
+
+export const getNextAdQuestion = async (sessionId: number) => {
+  return axios
+    .post(`${API_BASE_URL}/trivia/next/ad?session_id=${sessionId}`)
+    .then((response) => {
+      console.log("Next Ad Question Response:", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
+
+export const completeSession = async (sessionId: number) => {
+  return axios
+    .post(`${API_BASE_URL}/trivia/complete?session_id=${sessionId}`)
+    .then((response) => {
+      console.log("Session completed:", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error completing session:", error);
+    });
+}
+
+export const getLeaderboard = async () => {
+  return axios
+    .post(`${API_BASE_URL}/trivia/leaderboard`)
+    .then((response) => {
+      console.log("Leaderboard Response:", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching leaderboard:", error);
+    });
+}
