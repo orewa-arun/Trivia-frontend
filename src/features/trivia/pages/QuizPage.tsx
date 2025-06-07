@@ -3,6 +3,7 @@ import { getNextQuestion } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import QuestionCard from "../components/QuestionCard";
 import LoadingScreen from "../../../components/LoadingScreen";
+import ThreeDotLoader from "../../../components/ThreeDotLoader";
 
 interface Question {
   id: number;
@@ -59,7 +60,7 @@ const QuizPage = () => {
   };
 
   if (isLoading) {
-    return <div></div>;
+    return <div><ThreeDotLoader/></div>;
   }
 
   if (state.quizPhase === "AD") {

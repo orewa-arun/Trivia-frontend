@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { AdSectionType } from "../types"; // Assuming you have a type defined for AdSection
 import { getAd } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 // Usage of adCompleted is redundant here, but we keep it for future endeavor of improving the ad section
 const AdSection = () => {
@@ -50,7 +51,7 @@ const AdSection = () => {
 
   if (!ad) {
     return (
-      <div className="p-8 text-center text-gray-500">The ad has ended.</div>
+      <LoadingScreen message="Loading ad..." />
     );
   }
 
