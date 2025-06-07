@@ -59,7 +59,7 @@ const QuizPage = () => {
   };
 
   if (isLoading) {
-    return <div>"Loading question..."</div>;
+    return <div></div>;
   }
 
   if (state.quizPhase === "AD") {
@@ -69,7 +69,7 @@ const QuizPage = () => {
   }
 
   if (!currentQuestion) {
-    return <div></div>;
+    return <div>No questions available</div>;
   }
 
   return (
