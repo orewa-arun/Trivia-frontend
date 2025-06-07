@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getNextQuestion } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import QuestionCard from "../components/QuestionCard";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 interface Question {
   id: number;
@@ -30,7 +31,13 @@ const QuizPage = () => {
 
   useEffect(() => {
     if (quizCompleted) {
-      setQuizPhase("AD");
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        setQuizPhase("AD");
+      }, 2000); // 2 seconds fake loading
+
+      return () => clearTimeout(timer);
     }
   }, [quizCompleted]);
 
@@ -71,7 +78,7 @@ const QuizPage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading question...</div>;
+    return <LoadingScreen message="Preparing your results..." />;
   }
 
   if (quizCompleted) {
@@ -82,8 +89,8 @@ const QuizPage = () => {
     return <div>No questions available</div>;
   }
   return (
-    <div className="min-h-screen bg-indigo-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-md p-6 flex flex-col">
+    <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-5xl bg-white rounded-2xl p-8 flex flex-col">
         {/* Progress bar at top */}
         {/* <div className="mb-4">
           <div className="w-full bg-indigo-200 rounded-full h-3 shadow-inner">

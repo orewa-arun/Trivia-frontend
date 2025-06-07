@@ -106,12 +106,32 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   return (
-    <div className="w-full p-6 bg-white rounded-xl shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
+    <div className="w-full bg-white rounded-xl p-6">
+      {/* Header: Progress Bar + Meta Info */}
+      <div className="space-y-2 mb-6">
+        {/* Progress Bar */}
+        <div className="w-full bg-indigo-100 rounded-full h-3 overflow-hidden shadow-inner">
+          <div
+            className="bg-indigo-600 h-3 rounded-full transition-all duration-1000 ease-linear"
+            style={{ width: `${(timeLeft / timePerQuestion) * 100}%` }}
+          />
+        </div>
+
+        {/* Time left + Question number */}
+        <div className="flex justify-between text-sm text-gray-600 font-medium select-none">
+          <span>
+            Time Left: <span className="font-semibold">{timeLeft}s</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Question Text */}
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-6 leading-snug tracking-normal">
         {question}
       </h2>
 
-      <ul className="space-y-4 mb-8">
+      {/* Options */}
+      <ul className="space-y-4">
         {options.map((option, index) => (
           <li
             key={index}
@@ -129,22 +149,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         ))}
       </ul>
 
-      {/* Progress Bar */}
-      <div className="w-full bg-indigo-100 rounded-full h-4 overflow-hidden shadow-inner">
-        <div
-          className="bg-indigo-600 h-4 rounded-full transition-all duration-1000 ease-linear"
-          style={{ width: `${(timeLeft / timePerQuestion) * 100}%` }}
-        />
-      </div>
-
-      <div className="flex justify-between mt-3 text-sm text-gray-600 font-medium select-none">
-        <span>
-          Time left: <span className="font-bold">{timeLeft}s</span>
-        </span>
-        {isSubmitting && (
-          <span className="italic text-indigo-600">Submitting...</span>
-        )}
-      </div>
+      {/* Submitting status below */}
+      {isSubmitting && (
+        <div className="mt-6 text-center text-indigo-600 italic font-medium text-sm">
+          Submitting your answer...
+        </div>
+      )}
     </div>
   );
 };

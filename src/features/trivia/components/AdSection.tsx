@@ -64,8 +64,9 @@ const AdSection = () => {
       {ad.ad_image_url && (
         <img
           src={ad.ad_image_url}
-          alt="Advertisement"
-          className="w-full h-auto rounded-lg mb-4"
+          alt={ad.title || "Advertisement"}
+          onError={() => console.error("Failed to load ad image.")}
+          className="w-full max-h-[400px] object-contain rounded-lg mb-4"
         />
       )}
 

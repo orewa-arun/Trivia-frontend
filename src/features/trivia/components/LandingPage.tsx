@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PeacockLoader from "./PeacockLoader";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 const LandingPage = () => {
   const [loading, setLoading] = useState(false);
@@ -13,8 +13,12 @@ const LandingPage = () => {
     }, 2000); // simulate loading
   };
 
+  if (loading) {
+    return <LoadingScreen message="Getting you started..." />;
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50 px-4 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <div className="max-w-md w-full">
         <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-6">
           THE GREAT INDIAN TRIVIA
@@ -23,15 +27,13 @@ const LandingPage = () => {
           Test your knowledge of Indian History and win glory!
         </p>
 
-        {!loading ? (
+        {!loading && (
           <button
             onClick={handleStart}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-2xl transition-all shadow-lg"
           >
             Start
           </button>
-        ) : (
-          <PeacockLoader />
         )}
       </div>
     </div>
