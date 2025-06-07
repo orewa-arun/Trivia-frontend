@@ -69,7 +69,7 @@ const QuizPage = () => {
   }
 
   if (!currentQuestion) {
-    return <div>No questions available</div>;
+    return <div></div>;
   }
 
   return (
