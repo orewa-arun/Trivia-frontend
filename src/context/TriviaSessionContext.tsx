@@ -11,7 +11,7 @@ import {
   quizReducer,
   type TriviaAction,
   type TriviaState,
-} from "./QuizReducer";
+} from "./quizReducer";
 
 interface TriviaSession {
   sessionId: number | null;
