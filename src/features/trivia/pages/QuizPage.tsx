@@ -60,13 +60,13 @@ const QuizPage = () => {
   };
 
   if (isLoading) {
-    return <div><ThreeDotLoader/></div>;
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <ThreeDotLoader />
+    </div>;
   }
 
   if (state.quizPhase === "AD") {
-    return (
-      <LoadingScreen message="Getting your ads..."/>
-    );
+    return <LoadingScreen message="Getting your ads..." />;
   }
 
   if (!currentQuestion) {
