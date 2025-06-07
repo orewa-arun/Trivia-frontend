@@ -37,7 +37,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     selectedIndexRef.current = -1;
     hasSubmittedRef.current = false;
     setIsSubmitting(false);
-    console.log("Question type: ", question_type)
+    console.log("Question type: ", question_type);
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -87,48 +87,63 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   const getOptionClasses = (index: number) => {
-    let baseClasses = "p-3 mb-2 rounded-lg transition-colors";
+    let baseClasses =
+      "p-4 mb-3 rounded-lg font-medium text-gray-700 shadow-sm transition-colors duration-300";
 
     if (timeLeft > 0 && !isSubmitting && !hasSubmittedRef.current) {
-      baseClasses += " cursor-pointer";
+      baseClasses += " cursor-pointer border border-transparent";
+
       if (selectedIndex === index) {
-        baseClasses += " bg-blue-600 text-white";
+        baseClasses += " bg-indigo-600 text-white shadow-md";
       } else {
-        baseClasses += " bg-white hover:bg-blue-100";
+        baseClasses += " bg-white hover:bg-indigo-50 hover:border-indigo-300";
       }
     } else {
-      baseClasses += " bg-gray-100 cursor-default";
+      baseClasses += " bg-gray-100 cursor-not-allowed border border-gray-200";
+      // Optionally highlight correct/incorrect after submit here
     }
-
     return baseClasses;
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">{question}</h2>
+    <div className="w-full p-6 bg-white rounded-xl shadow-md">
+      <h2 className="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
+        {question}
+      </h2>
 
-      <ul className="space-y-3 mb-6">
+      <ul className="space-y-4 mb-8">
         {options.map((option, index) => (
           <li
             key={index}
             className={getOptionClasses(index)}
             onClick={() => handleOptionClick(index)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleOptionClick(index);
+            }}
+            aria-pressed={selectedIndex === index}
           >
             {option}
           </li>
         ))}
       </ul>
 
-      <div className="bg-gray-200 rounded-full h-2.5">
+      {/* Progress Bar */}
+      <div className="w-full bg-indigo-100 rounded-full h-4 overflow-hidden shadow-inner">
         <div
-          className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000 ease-linear"
+          className="bg-indigo-600 h-4 rounded-full transition-all duration-1000 ease-linear"
           style={{ width: `${(timeLeft / timePerQuestion) * 100}%` }}
         />
       </div>
 
-      <div className="flex justify-between mt-2 text-sm text-gray-600">
-        <span>Time left: {timeLeft}s</span>
-        {isSubmitting && <span>Submitting...</span>}
+      <div className="flex justify-between mt-3 text-sm text-gray-600 font-medium select-none">
+        <span>
+          Time left: <span className="font-bold">{timeLeft}s</span>
+        </span>
+        {isSubmitting && (
+          <span className="italic text-indigo-600">Submitting...</span>
+        )}
       </div>
     </div>
   );

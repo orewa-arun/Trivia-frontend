@@ -30,7 +30,7 @@ const QuizPage = () => {
 
   useEffect(() => {
     if (quizCompleted) {
-      setQuizPhase("AD")
+      setQuizPhase("AD");
     }
   }, [quizCompleted]);
 
@@ -81,20 +81,59 @@ const QuizPage = () => {
   if (!currentQuestion) {
     return <div>No questions available</div>;
   }
-
   return (
-    <div>
-        <div>Question No : {questionCount + 1}</div>
-      <QuestionCard
-        question={currentQuestion.question}
-        options={currentQuestion.options}
-        questionId={currentQuestion.id}
-        question_type={currentQuestion.question_type}
-        timePerQuestion={timePerQuestion}
-        onNextQuestion={handleNextQuestion}
-        setScore={setScore}
-      />
-      <div>Your score: {score}</div>
+    <div className="min-h-screen bg-indigo-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-md p-6 flex flex-col">
+        {/* Progress bar at top */}
+        {/* <div className="mb-4">
+          <div className="w-full bg-indigo-200 rounded-full h-3 shadow-inner">
+            <div
+              className="bg-indigo-600 h-3 rounded-full transition-all duration-500 ease-in-out"
+              style={{ width: `${(questionCount / questionLimit) * 100}%` }}
+            />
+          </div>
+        </div> */}
+
+        {/* Question count (simple style) */}
+        <div className="my-3 text-center text-gray-600 font-medium">
+          Question {questionCount + 1} of {questionLimit}
+        </div>
+
+        <div className="flex-1">
+          {isLoading ? (
+            <div className="text-center py-10 text-indigo-600 font-semibold text-base">
+              Loading question...
+            </div>
+          ) : quizCompleted ? (
+            <div className="text-center py-10 text-green-700 font-semibold text-lg">
+              🎉 Quiz completed! Thank you for playing.
+            </div>
+          ) : !currentQuestion ? (
+            <div className="text-center py-10 text-red-500 font-semibold text-base">
+              No questions available
+            </div>
+          ) : (
+            <>
+              <div className="w-full">
+                <QuestionCard
+                  question={currentQuestion.question}
+                  options={currentQuestion.options}
+                  questionId={currentQuestion.id}
+                  question_type={currentQuestion.question_type}
+                  timePerQuestion={timePerQuestion}
+                  onNextQuestion={handleNextQuestion}
+                  setScore={setScore}
+                />
+              </div>
+
+              {/* Score below question card, more visible */}
+              <div className="mt-4 bg-indigo-100 text-indigo-800 font-semibold rounded-md py-3 px-5 text-center text-lg shadow-inner select-none">
+                Your Score: {score}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
