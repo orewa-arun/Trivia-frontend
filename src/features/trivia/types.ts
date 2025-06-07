@@ -11,8 +11,8 @@ export type AdSectionType = {
   title : string;
   content: string;
   duration: number;
-  ad_image_url?: string;
-  ad_video_url?: string;
-  ad_audio_url?: string;
-  ad_type?: string;
+  image_url?: string;
+  video_url?: string;
+  audio_url?: string;
+  type?: string;
 };

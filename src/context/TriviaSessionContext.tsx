@@ -1,5 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import type { Dispatch, ReactNode, SetStateAction } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useReducer,
+} from "react";
+import type { Dispatch, ReactNode } from "react";
+import {
+  initialState,
+  quizReducer,
+  type TriviaAction,
+  type TriviaState,
+} from "./QuizReducer";
 
 interface TriviaSession {
   sessionId: number | null;
@@ -11,18 +23,33 @@ interface TriviaSessionContextType {
   session: TriviaSession;
   startNewSession: (sessionId: number, guestName: string) => void;
   endCurrentSession: () => void;
-  quizPhase: string;
-  setQuizPhase: Dispatch<SetStateAction<string>>;
+  state: TriviaState;
+  dispatch: Dispatch<TriviaAction>;
 }
 
 const TriviaSessionContext = createContext<
   TriviaSessionContextType | undefined
 >(undefined);
 
+const loadQuizStateFromStorage = (): TriviaState => {
+  const saved = localStorage.getItem("quizState");
+  if (!saved) return initialState;
+
+  return JSON.parse(saved);
+};
+
 export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  // Load initial state from localStorage (if exists)
+  const [state, dispatch] = useReducer(quizReducer, loadQuizStateFromStorage());
+
+  useEffect(() => {
+    localStorage.setItem(
+      "quizState",
+      JSON.stringify(state)
+    );
+  }, [state.questionCount]);
+
   const loadFromLocalStorage = (): TriviaSession => {
     const saved = localStorage.getItem("triviaSession");
     return saved
@@ -36,31 +63,28 @@ export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
 
   const [session, setSession] = useState<TriviaSession>(loadFromLocalStorage());
 
-  // Update localStorage whenever session changes
   useEffect(() => {
     localStorage.setItem("triviaSession", JSON.stringify(session));
   }, [session]);
 
   const startNewSession = (sessionId: number, guestName: string) => {
     const newSession = {
-      ...session,
       sessionId,
       guestName,
       isSessionActive: true,
     };
+    localStorage.setItem("quizState", JSON.stringify(initialState));
     setSession(newSession);
   };
 
   const endCurrentSession = () => {
-    setSession((prev) => ({
-      ...prev,
+    setSession({
       sessionId: null,
       guestName: "Guest User",
       isSessionActive: false,
-    }));
+    });
+    localStorage.setItem("quizState", JSON.stringify(initialState));
   };
-
-  const [quizPhase, setQuizPhase] = useState("QUIZ");
 
   return (
     <TriviaSessionContext.Provider
@@ -68,8 +92,8 @@ export const TriviaSessionProvider: React.FC<{ children: ReactNode }> = ({
         session,
         startNewSession,
         endCurrentSession,
-        quizPhase,
-        setQuizPhase,
+        state,
+        dispatch,
       }}
     >
       {children}

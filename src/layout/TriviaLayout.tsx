@@ -20,7 +20,7 @@ const TriviaLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Footer */}
       <footer className="bg-white text-center text-sm text-gray-500 py-4 border-t">
-        © {new Date().getFullYear()} QuizMaster. All rights reserved.
+        © {new Date().getFullYear()} The Great Indian Trivia. All rights reserved.
       </footer>
     </div>
   );

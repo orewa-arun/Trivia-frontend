@@ -6,14 +6,14 @@ import Leaderboard from "../components/Leaderboard";
 
 // quizPhase should change to "QUIZ" when play_again is clicked and the navigated to the landing page route, reset the session user info
 const TriviaFlow = () => {
-  const { quizPhase } = useTriviaSession();
+  const { state } = useTriviaSession();
 
   return (
     <div>
-      <div>{quizPhase == "QUIZ" && <QuizPage />}</div>
-      <div>{quizPhase == "AD" && <AdSection />}</div>
-      <div>{quizPhase == "ADQUIZ" && <AdQuizPage />}</div>
-      <div>{quizPhase == "LEADERBOARD" && <Leaderboard />}</div>
+      <div>{state.quizPhase == "QUIZ" && <QuizPage />}</div>
+      <div>{state.quizPhase == "AD" && <AdSection />}</div>
+      <div>{state.quizPhase == "ADQUIZ" && <AdQuizPage />}</div>
+      <div>{state.quizPhase == "LEADERBOARD" && <Leaderboard />}</div>
     </div>
   );
 };

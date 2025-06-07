@@ -9,7 +9,6 @@ interface QuestionCardProps {
   questionId: number;
   timePerQuestion: number;
   onNextQuestion: () => Promise<void>;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({
@@ -19,13 +18,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   timePerQuestion,
   onNextQuestion,
   question_type,
-  setScore,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [timeLeft, setTimeLeft] = useState<number>(timePerQuestion);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const { session } = useTriviaSession();
+  const { session, dispatch } = useTriviaSession();
 
   const selectedIndexRef = useRef<number>(-1);
   const hasSubmittedRef = useRef<boolean>(false);
@@ -72,7 +69,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           selectedIndexRef.current
         );
         if (response.is_correct) {
-          setScore((prevScore: number) => prevScore + 1);
+          dispatch({ type: "INCREMENT_SCORE" });
         }
       }
     } catch (error) {

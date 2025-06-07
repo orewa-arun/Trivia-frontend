@@ -4,3 +4,4 @@ TODOs:
 3) Make the transitions smoother by using loader animations.
 4) Create the play again button. 
 5) Host the app for free.
+6) Refresh proof timer should be created

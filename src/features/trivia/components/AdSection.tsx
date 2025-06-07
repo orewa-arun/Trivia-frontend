@@ -8,7 +8,7 @@ const AdSection = () => {
   const [ad, setAd] = useState<AdSectionType | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
   const [adCompleted, setAdCompleted] = useState(false);
-  const { setQuizPhase } = useTriviaSession(); // Assuming you have a context to manage quiz phases
+  const { dispatch } = useTriviaSession(); // Assuming you have a context to manage quiz phases
 
   useEffect(() => {
     const loadAd = async () => {
@@ -28,7 +28,7 @@ const AdSection = () => {
 
   useEffect(() => {
     if (adCompleted) {
-      setQuizPhase("ADQUIZ");
+      dispatch({ type: "START_AD_QUIZ" });
     }
   }, [adCompleted]);
 
@@ -61,9 +61,9 @@ const AdSection = () => {
       </div>
       <h2 className="text-2xl font-bold mb-4 text-blue-800">{ad.title}</h2>
 
-      {ad.ad_image_url && (
+      {ad.image_url && (
         <img
-          src={ad.ad_image_url}
+          src={ad.image_url}
           alt={ad.title || "Advertisement"}
           onError={() => console.error("Failed to load ad image.")}
           className="w-full max-h-[400px] object-contain rounded-lg mb-4"

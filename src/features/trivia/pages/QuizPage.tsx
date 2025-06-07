@@ -15,38 +15,21 @@ interface Question {
 const QuizPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [quizCompleted, setQuizCompleted] = useState(false);
-  const { session, setQuizPhase } = useTriviaSession();
-  const [questionCount, setQuestionCount] = useState(0);
-  const questionLimit = 10; // Limit for the number of questions
-  const timePerQuestion = 10; // Default time per question
-  const [score, setScore] = useState(0);
+  const { session, state, dispatch } = useTriviaSession();
+  const questionLimit = 10;
+  const timePerQuestion = 10;
 
   // Fetch initial question
   useEffect(() => {
-    if (session.sessionId && !currentQuestion && !quizCompleted) {
+    if (session.sessionId && !currentQuestion && state.quizPhase === "QUIZ") {
       fetchQuestion();
     }
-  }, [session.sessionId]);
-
-  useEffect(() => {
-    if (quizCompleted) {
-      setIsLoading(true);
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        setQuizPhase("AD");
-      }, 2000); // 2 seconds fake loading
-
-      return () => clearTimeout(timer);
-    }
-  }, [quizCompleted]);
+  }, [session.sessionId, state.quizPhase]);
 
   const fetchQuestion = async () => {
     setIsLoading(true);
     try {
       const response = await getNextQuestion(session.sessionId!);
-
-      console.log(response);
 
       const currentQuestion = {
         id: response.id,
@@ -65,80 +48,52 @@ const QuizPage = () => {
   };
 
   const handleNextQuestion = async () => {
-    const nextCount = questionCount + 1;
-
-    if (nextCount >= questionLimit) {
-      setQuizCompleted(true);
+    if (state.questionCount + 1 >= questionLimit) {
+      dispatch({ type: "START_AD" }); // Transition to "AD" phase
       return;
     }
 
-    setQuestionCount(nextCount);
+    dispatch({ type: "INCREMENT_QUESTION" });
     await new Promise((resolve) => setTimeout(resolve, 100));
     await fetchQuestion();
   };
 
   if (isLoading) {
-    return <LoadingScreen message="Preparing your results..." />;
+    return <div>"Loading question..."</div>;
   }
 
-  if (quizCompleted) {
-    return <div>Quiz completed! Thank you for playing.</div>;
+  if (state.quizPhase === "AD") {
+    return (
+      <LoadingScreen message="Getting your ads..."/>
+    );
   }
 
   if (!currentQuestion) {
     return <div>No questions available</div>;
   }
+
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-5xl bg-white rounded-2xl p-8 flex flex-col">
-        {/* Progress bar at top */}
-        {/* <div className="mb-4">
-          <div className="w-full bg-indigo-200 rounded-full h-3 shadow-inner">
-            <div
-              className="bg-indigo-600 h-3 rounded-full transition-all duration-500 ease-in-out"
-              style={{ width: `${(questionCount / questionLimit) * 100}%` }}
-            />
-          </div>
-        </div> */}
-
-        {/* Question count (simple style) */}
         <div className="my-3 text-center text-gray-600 font-medium">
-          Question {questionCount + 1} of {questionLimit}
+          Question {state.questionCount + 1} of {questionLimit}
         </div>
 
         <div className="flex-1">
-          {isLoading ? (
-            <div className="text-center py-10 text-indigo-600 font-semibold text-base">
-              Loading question...
-            </div>
-          ) : quizCompleted ? (
-            <div className="text-center py-10 text-green-700 font-semibold text-lg">
-              🎉 Quiz completed! Thank you for playing.
-            </div>
-          ) : !currentQuestion ? (
-            <div className="text-center py-10 text-red-500 font-semibold text-base">
-              No questions available
-            </div>
-          ) : (
-            <>
-              <div className="w-full">
-                <QuestionCard
-                  question={currentQuestion.question}
-                  options={currentQuestion.options}
-                  questionId={currentQuestion.id}
-                  question_type={currentQuestion.question_type}
-                  timePerQuestion={timePerQuestion}
-                  onNextQuestion={handleNextQuestion}
-                  setScore={setScore}
-                />
-              </div>
+          <div className="w-full">
+            <QuestionCard
+              question={currentQuestion.question}
+              options={currentQuestion.options}
+              questionId={currentQuestion.id}
+              question_type={currentQuestion.question_type}
+              timePerQuestion={timePerQuestion}
+              onNextQuestion={handleNextQuestion}
+            />
+          </div>
 
-              {/* Score below question card, more visible */}
-              <div className="mt-4 bg-indigo-100 text-indigo-800 font-semibold rounded-md py-3 px-5 text-center text-lg shadow-inner select-none">
-                Your Score: {score}
-              </div>
-            </>
-          )}
+          <div className="mt-4 bg-indigo-100 text-indigo-800 font-semibold rounded-md py-3 px-5 text-center text-lg shadow-inner select-none">
+            Your Score: {state.score}
+          </div>
         </div>
       </div>
     </div>

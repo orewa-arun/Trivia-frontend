@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { startSession } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 const NameInput = () => {
   const [name, setName] = useState("");
@@ -9,6 +10,7 @@ const NameInput = () => {
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
   const { startNewSession } = useTriviaSession();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (submitted) return;
@@ -34,11 +36,23 @@ const NameInput = () => {
   };
 
   const handleSubmit = async () => {
-    if (submitted) return;
-    setSubmitted(true);
-    await startAndSaveSession();
-    navigate("/trivia/quiz");
+    setLoading(true);
+    try {
+      if (submitted) return;
+      await startAndSaveSession();
+      setSubmitted(true);
+      navigate("/trivia/quiz");
+    } catch (error) {
+      console.error("Error during submission:", error);
+      setSubmitted(false);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return <LoadingScreen message="Preparing your Quiz..." />;
+  }
 
   return (
     <div className="min-h-screen bg-indigo-50 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
