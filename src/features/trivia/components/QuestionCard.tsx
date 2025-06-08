@@ -214,7 +214,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             isAnswerCorrect ? "text-green-600 italic" : "text-red-600 italic"
           }`}
         >
-          {isAnswerCorrect ? "Correct! 🎉" : "Oops! That's wrong."}
+          {isAnswerCorrect ? "Correct! 🎉" : "Oops! That's wrong"}
         </div>
       )}
     </div>
