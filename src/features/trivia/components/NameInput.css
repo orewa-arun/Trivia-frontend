@@ -1,5 +1,5 @@
 .name-input-bg {
-  background: url("src/assets/bg-orange.jpg") no-repeat center center;
+  background: url("/bg-orange.jpg") no-repeat center center;
   background-size: cover;
   position: relative;
   overflow: hidden;
@@ -17,7 +17,7 @@
   position: absolute;
   width: 48px;
   height: 48px;
-  background-image: url("src/assets/gemini-star.svg");
+  background-image: url("/gemini-star.svg");
   background-repeat: no-repeat;
   background-size: contain;
   opacity: 0.8;
@@ -59,3 +59,22 @@
     opacity: 0.5;
   }
 }
+
+@keyframes blink-green {
+  0%, 100% { background-color: #22c55e; } /* Tailwind green-500 */
+  50% { background-color: #86efac; } /* Tailwind green-300 */
+}
+
+@keyframes blink-red {
+  0%, 100% { background-color: #ef4444; } /* Tailwind red-500 */
+  50% { background-color: #fca5a5; } /* Tailwind red-300 */
+}
+
+.animate-blink-green {
+  animation: blink-green 0.5s ease-in-out infinite;
+}
+
+.animate-blink-red {
+  animation: blink-red 0.5s ease-in-out infinite;
+}
+

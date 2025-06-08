@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import type { AdSectionType } from "../types"; // Assuming you have a type defined for AdSection
+import type { AdSectionType } from "../types";
 import { getAd } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import LoadingScreen from "../../../components/LoadingScreen";
+import "../components/NameInput.css"; 
 
-// Usage of adCompleted is redundant here, but we keep it for future endeavor of improving the ad section
 const AdSection = () => {
   const [ad, setAd] = useState<AdSectionType | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
   const [adCompleted, setAdCompleted] = useState(false);
-  const { dispatch } = useTriviaSession(); // Assuming you have a context to manage quiz phases
+  const { dispatch } = useTriviaSession();
 
   useEffect(() => {
     const loadAd = async () => {
@@ -38,7 +38,7 @@ const AdSection = () => {
 
     if (timer <= 0) {
       setAdCompleted(true);
-      setAd(null); // Remove or hide ad when time is up
+      setAd(null);
       return;
     }
 
@@ -50,28 +50,36 @@ const AdSection = () => {
   }, [timer]);
 
   if (!ad) {
-    return (
-      <LoadingScreen message="Loading ad..." />
-    );
+    return <LoadingScreen message="Loading ad..." />;
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 mt-6 relative border border-gray-200">
-      <div className="absolute top-4 right-4 text-sm text-gray-500">
-        Ad ends in: {timer}s
+    <div className="name-input-bg relative min-h-screen flex items-center justify-center p-4">
+      <div className="glitter-overlay pointer-events-none z-0">
+        <div className="star" style={{ top: "10%", left: "15%" }} />
+        <div className="star" style={{ top: "30%", left: "75%" }} />
+        <div className="star" style={{ top: "60%", left: "40%" }} />
+        <div className="star" style={{ top: "80%", left: "80%" }} />
       </div>
-      <h2 className="text-2xl font-bold mb-4 text-blue-800">{ad.title}</h2>
 
-      {ad.image_url && (
-        <img
-          src={ad.image_url}
-          alt={ad.title || "Advertisement"}
-          onError={() => console.error("Failed to load ad image.")}
-          className="w-full max-h-[400px] object-contain rounded-lg mb-4"
-        />
-      )}
+      <div className="relative w-full max-w-4xl bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-xl p-8 text-black z-10">
+        <div className="absolute top-4 right-4 text-sm text-gray-500">
+          Ad ends in: {timer}s
+        </div>
 
-      <p className="text-gray-700 mb-2">{ad.content}</p>
+        <h2 className="text-2xl font-bold mb-4 text-blue-800">{ad.title}</h2>
+
+        {ad.image_url && (
+          <img
+            src={ad.image_url}
+            alt={ad.title || "Advertisement"}
+            onError={() => console.error("Failed to load ad image.")}
+            className="w-full max-h-[400px] object-contain rounded-lg mb-6"
+          />
+        )}
+
+        <p className="text-gray-800 text-lg leading-relaxed">{ad.content}</p>
+      </div>
     </div>
   );
 };

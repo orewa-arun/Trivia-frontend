@@ -4,6 +4,7 @@ import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import QuestionCard from "../components/QuestionCard";
 import LoadingScreen from "../../../components/LoadingScreen";
 import ThreeDotLoader from "../../../components/ThreeDotLoader";
+import "../components/NameInput.css"; // ⬅️ Use same visual styling
 
 interface AdQuestion {
   id: number;
@@ -14,9 +15,7 @@ interface AdQuestion {
 }
 
 const AdQuizPage = () => {
-  const [currentQuestion, setCurrentQuestion] = useState<AdQuestion | null>(
-    null
-  );
+  const [currentQuestion, setCurrentQuestion] = useState<AdQuestion | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const { session, endCurrentSession, state, dispatch } = useTriviaSession();
@@ -72,7 +71,8 @@ const AdQuizPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="name-input-bg relative min-h-screen flex items-center justify-center">
+        <div className="glitter-overlay" />
         <ThreeDotLoader />
       </div>
     );
@@ -83,31 +83,34 @@ const AdQuizPage = () => {
   }
 
   if (!currentQuestion) {
-    return <div>No questions available</div>;
+    return <div>No ad questions available</div>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-5xl bg-white rounded-2xl p-8 flex flex-col">
-        <div className="my-3 text-center text-gray-600 font-medium">
-          Question {state.adQuestionCount + 1} of {questionLimit}
+    <div className="name-input-bg relative min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="glitter-overlay pointer-events-none z-0">
+        <div className="star" style={{ top: "10%", left: "15%" }} />
+        <div className="star" style={{ top: "30%", left: "75%" }} />
+        <div className="star" style={{ top: "60%", left: "40%" }} />
+        <div className="star" style={{ top: "80%", left: "80%" }} />
+      </div>
+
+      <div className="w-full max-w-5xl bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-xl p-8 text-black z-10">
+        <div className="text-center text-gray-700 font-medium mb-4">
+          Ad Question {state.adQuestionCount + 1} of {questionLimit}
         </div>
 
-        <div className="flex-1">
-          <div className="w-full">
-            <QuestionCard
-              question={currentQuestion.question}
-              options={currentQuestion.options}
-              questionId={currentQuestion.id}
-              question_type={currentQuestion.question_type}
-              timePerQuestion={timePerQuestion}
-              onNextQuestion={handleNextQuestion}
-            />
-          </div>
+        <QuestionCard
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          questionId={currentQuestion.id}
+          question_type={currentQuestion.question_type}
+          timePerQuestion={timePerQuestion}
+          onNextQuestion={handleNextQuestion}
+        />
 
-          <div className="mt-4 bg-indigo-100 text-indigo-800 font-semibold rounded-md py-3 px-5 text-center text-lg shadow-inner select-none">
-            Your Score: {state.score}
-          </div>
+        <div className="mt-6 bg-indigo-100 text-indigo-800 font-semibold rounded-md py-3 px-5 text-center text-lg shadow-inner select-none">
+          Your Score: {state.score}
         </div>
       </div>
     </div>
