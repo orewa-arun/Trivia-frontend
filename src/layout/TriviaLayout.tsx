@@ -3,14 +3,13 @@ import { Trophy } from "lucide-react";
 
 const TriviaLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 to-blue-100 text-gray-800">
+    <div className="min-h-screen flex flex-col bg-white text-black">
       {/* Header */}
-      <header className="w-full shadow bg-white py-4 px-6 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-2 text-indigo-600 font-bold text-xl">
+      <header className="w-full shadow bg-white py-4 px-6 flex items-center justify-center sticky top-0 z-10 border-b">
+        <div className="flex items-center gap-2 font-bold text-xl text-black">
           <Trophy className="w-6 h-6" />
           <span>The Great Indian Trivia</span>
         </div>
-        {/* Add optional nav or login status */}
       </header>
 
       {/* Main Content */}
@@ -19,7 +18,7 @@ const TriviaLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       </main>
 
       {/* Footer */}
-      <footer className="bg-white text-center text-sm text-gray-500 py-4 border-t">
+      <footer className="bg-white text-center text-sm text-gray-600 py-4 border-t">
         © {new Date().getFullYear()} The Great Indian Trivia. All rights reserved.
       </footer>
     </div>

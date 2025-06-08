@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { startSession } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import LoadingScreen from "../../../components/LoadingScreen";
+import "./NameInput.css"; // Make sure this exists and includes styles below
 
 const NameInput = () => {
   const [name, setName] = useState("");
@@ -55,15 +56,23 @@ const NameInput = () => {
   }
 
   return (
-    <div className="min-h-screen bg-indigo-50 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center">
-        <h2 className="text-3xl font-bold text-indigo-700 mb-4">
+    <div className="name-input-bg relative min-h-screen flex items-center justify-center p-4">
+      {/* Star Overlay */}
+      <div className="absolute inset-0 glitter-overlay pointer-events-none">
+        <div className="star" />
+        <div className="star" />
+        <div className="star" />
+        <div className="star" />
+      </div>
+
+      <div className="w-full max-w-2xl bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-xl p-8 text-center z-10">
+        <h2 className="text-3xl font-bold text-black mb-4">
           Welcome to the Quiz!
         </h2>
 
-        <p className="text-gray-600 text-base mb-6">
+        <p className="text-gray-700 text-base mb-6">
           Please enter your name to begin. You’ll be auto-joined in{" "}
-          <span className="font-semibold text-indigo-500">{secondsLeft}s</span>.
+          <span className="font-semibold text-black">{secondsLeft}s</span>.
         </p>
 
         <input
@@ -71,13 +80,13 @@ const NameInput = () => {
           placeholder="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-5 py-3 border border-indigo-300 rounded-xl text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6"
+          className="w-full px-5 py-3 border border-orange-300 rounded-xl text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 mb-6"
         />
 
         <button
           onClick={handleSubmit}
           disabled={submitted}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-200 disabled:opacity-50"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-200 disabled:opacity-50"
         >
           Start Quiz
         </button>

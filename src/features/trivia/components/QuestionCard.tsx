@@ -14,10 +14,10 @@ interface QuestionCardProps {
 const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   options,
+  question_type,
   questionId,
   timePerQuestion,
   onNextQuestion,
-  question_type,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [timeLeft, setTimeLeft] = useState<number>(timePerQuestion);
@@ -27,14 +27,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   const selectedIndexRef = useRef<number>(-1);
   const hasSubmittedRef = useRef<boolean>(false);
 
-  // Timer effect
   useEffect(() => {
     setTimeLeft(timePerQuestion);
     setSelectedIndex(-1);
     selectedIndexRef.current = -1;
     hasSubmittedRef.current = false;
     setIsSubmitting(false);
-    console.log("Question type: ", question_type);
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -59,6 +57,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   const submitAnswer = async () => {
     if (hasSubmittedRef.current) return;
     hasSubmittedRef.current = true;
+    console.log("question_type:", question_type);
 
     setIsSubmitting(true);
     try {
@@ -91,39 +90,62 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       baseClasses += " cursor-pointer border border-transparent";
 
       if (selectedIndex === index) {
-        baseClasses += " bg-indigo-600 text-white shadow-md";
+        baseClasses += " bg-orange-600 text-white shadow-md";
       } else {
-        baseClasses += " bg-white hover:bg-indigo-50 hover:border-indigo-300";
+        baseClasses += " bg-white hover:bg-orange-50 hover:border-orange-300";
       }
     } else {
       baseClasses += " bg-gray-100 cursor-not-allowed border border-gray-200";
-      // Optionally highlight correct/incorrect after submit here
     }
     return baseClasses;
   };
 
-  return (
-    <div className="w-full bg-white rounded-xl p-6">
-      {/* Header: Progress Bar + Meta Info */}
-      <div className="space-y-2 mb-6">
-        {/* Progress Bar */}
-        <div className="w-full bg-indigo-100 rounded-full h-3 overflow-hidden shadow-inner">
-          <div
-            className="bg-indigo-600 h-3 rounded-full transition-all duration-1000 ease-linear"
-            style={{ width: `${(timeLeft / timePerQuestion) * 100}%` }}
-          />
-        </div>
+  const radius = 30;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (timeLeft / timePerQuestion) * 100;
+  const strokeDashoffset = circumference * (1 - progress / 100);
 
-        {/* Time left + Question number */}
-        <div className="flex justify-between text-sm text-gray-600 font-medium select-none">
-          <span>
-            Time Left: <span className="font-semibold">{timeLeft}s</span>
-          </span>
-        </div>
+  return (
+    <div className="w-full bg-white rounded-xl p-6 relative z-10">
+      {/* Circular Timer */}
+      <div className="flex justify-center mb-6">
+        <svg className="w-20 h-20">
+          <circle
+            className="text-orange-200"
+            strokeWidth="5"
+            stroke="currentColor"
+            fill="transparent"
+            r={radius}
+            cx="40"
+            cy="40"
+          />
+          <circle
+            className="text-orange-500"
+            strokeWidth="5"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            stroke="currentColor"
+            fill="transparent"
+            r={radius}
+            cx="40"
+            cy="40"
+            style={{ transition: "stroke-dashoffset 1s linear" }}
+          />
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dy=".3em"
+            className="text-sm fill-orange-700 font-bold"
+          >
+            {timeLeft}s
+          </text>
+        </svg>
       </div>
 
-      {/* Question Text */}
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-6 leading-snug tracking-normal">
+      {/* Question */}
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-6 leading-snug tracking-normal text-center">
         {question}
       </h2>
 
@@ -146,9 +168,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         ))}
       </ul>
 
-      {/* Submitting status below */}
       {isSubmitting && (
-        <div className="mt-6 text-center text-indigo-600 italic font-medium text-sm">
+        <div className="mt-6 text-center text-orange-600 italic font-medium text-sm">
           Submitting your answer...
         </div>
       )}
