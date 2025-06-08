@@ -60,9 +60,11 @@ const QuizPage = () => {
   };
 
   if (isLoading) {
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <ThreeDotLoader />
-    </div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <ThreeDotLoader />
+      </div>
+    );
   }
 
   if (state.quizPhase === "AD") {
