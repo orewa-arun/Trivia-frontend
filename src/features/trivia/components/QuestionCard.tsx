@@ -21,9 +21,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   onNextQuestion,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-  // const [correctIndex, setCorrectIndex] = useState<number | null>(null);
-  const [, setCorrectIndex] = useState<number | null>(null);
-
+  const [correctIndex, setCorrectIndex] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(timePerQuestion);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [blinkType, setBlinkType] = useState<"correct" | "incorrect" | null>(
@@ -80,7 +78,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           selectedIndexRef.current
         );
 
-        setCorrectIndex(response.correct_index);
+        setCorrectIndex(response.correct);
         setIsAnswerCorrect(response.is_correct);
 
         if (response.is_correct) {
@@ -108,24 +106,28 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
   const getOptionClasses = (index: number) => {
     let baseClasses =
-      "p-4 mb-3 rounded-lg font-medium shadow-sm transition-all duration-300";
+      "p-4 mb-3 rounded-lg font-medium shadow-sm transition-all duration-300 relative";
 
     if (hasSubmittedRef.current) {
-      // if (correctIndex === index) {
-      if (isAnswerCorrect && selectedIndex === index) {
-        baseClasses += " bg-green-500 text-white";
-        // Apply green blink to correct answer if it was selected
-        if (blinkType === "correct") {
+      // Show correct answer in green
+      if (correctIndex === index) {
+        baseClasses += " bg-green-500 text-white border-2 border-green-600";
+        // Apply green blink to correct answer
+        if (blinkType === "correct" && selectedIndex === index) {
           baseClasses += " animate-blink-green";
         }
-      } else if (selectedIndex === index) {
-        baseClasses += " bg-red-500 text-white";
+      } 
+      // Show selected wrong answer in red
+      else if (selectedIndex === index && !isAnswerCorrect) {
+        baseClasses += " bg-red-500 text-white border-2 border-red-600";
         // Apply red blink to incorrect selected answer
         if (blinkType === "incorrect") {
           baseClasses += " animate-blink-red";
         }
-      } else {
-        baseClasses += " bg-gray-100 text-gray-500";
+      } 
+      // Other options in gray
+      else {
+        baseClasses += " bg-gray-100 text-gray-500 border border-gray-200";
       }
     } else {
       baseClasses += " border border-transparent text-gray-700 cursor-pointer";
@@ -138,6 +140,25 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     }
 
     return baseClasses;
+  };
+
+  const getOptionIcon = (index: number) => {
+    if (!hasSubmittedRef.current) return null;
+    
+    if (correctIndex === index) {
+      return (
+        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white">
+          ✓
+        </span>
+      );
+    } else if (selectedIndex === index && !isAnswerCorrect) {
+      return (
+        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white">
+          ✗
+        </span>
+      );
+    }
+    return null;
   };
 
   const radius = 30;
@@ -204,17 +225,28 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             aria-pressed={selectedIndex === index}
           >
             {option}
+            {getOptionIcon(index)}
           </li>
         ))}
       </ul>
 
+      {/* Answer feedback */}
       {isSubmitting && isAnswerCorrect !== null && (
-        <div
-          className={`mt-6 text-center font-medium text-sm ${
-            isAnswerCorrect ? "text-green-600 italic" : "text-red-600 italic"
-          }`}
-        >
-          {isAnswerCorrect ? "Correct! 🎉" : "Oops! That's wrong"}
+        <div className="mt-6 text-center">
+          <div
+            className={`font-medium text-sm mb-2 ${
+              isAnswerCorrect ? "text-green-600 italic" : "text-red-600 italic"
+            }`}
+          >
+            {isAnswerCorrect ? "Correct!" : "Oops! That's wrong"}
+          </div>
+          
+          {/* Show correct answer when user is wrong */}
+          {!isAnswerCorrect && correctIndex !== null && (
+            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded-lg">
+              <span className="font-medium">Correct answer:</span> {options[correctIndex]}
+            </div>
+          )}
         </div>
       )}
     </div>
