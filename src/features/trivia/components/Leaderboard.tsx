@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
 import { getLeaderboard } from "../api/triviaApi";
+import { useTriviaSession } from "../../../context/TriviaSessionContext";
 
 type LeaderboardEntry = {
   user_id: number;
   name: string;
   score: number;
-  started_at: string;
   completed_at: string;
 };
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [activeTab, setActiveTab] = useState<'daily' | 'monthly'>('daily');
+  const { state } = useTriviaSession();
+
+  const logos = {
+    TEAM_CSK: "https://static.wixstatic.com/media/0293d4_0be320985f284973a119aaada3d6933f~mv2.jpg/v1/fill/w_980,h_680,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/0293d4_0be320985f284973a119aaada3d6933f~mv2.jpg",
+    TEAM_RCB: "https://www.royalchallengers.com/PRRCB01/public/styles/1061x767_landscape/public/2025-02/RCB-LOGO-IMAGE-%281%29%20%281%29.jpg?itok=ZrMSeTQ9",
+    TEAM_MI: "https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/Mumbai_Indians_Logo.svg/800px-Mumbai_Indians_Logo.svg.png",
+  };
+
+  // Get current team logo based on state.subcategory
+  const getCurrentLogo = () => {
+    return logos[state.quizSubCategory as keyof typeof logos] || logos.TEAM_CSK;
+  };
 
   useEffect(() => {
     const loadLeaderboard = async () => {
@@ -24,32 +36,6 @@ const Leaderboard = () => {
     };
     loadLeaderboard();
   }, []);
-
-  // Mock user avatars - replace with actual user avatars
-  const avatars = [
-    "https://i.pravatar.cc/100?img=1",
-    "https://i.pravatar.cc/100?img=2", 
-    "https://i.pravatar.cc/100?img=3",
-    "https://i.pravatar.cc/100?img=4",
-    "https://i.pravatar.cc/100?img=5",
-    "https://i.pravatar.cc/100?img=6",
-    "https://i.pravatar.cc/100?img=7",
-    "https://i.pravatar.cc/100?img=8"
-  ];
-
-  // const getPositionStyle = (index: number) => {
-  //   if (index === 0) return "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg";
-  //   if (index === 1) return "bg-gradient-to-r from-gray-300 to-gray-400 text-white shadow-md";
-  //   if (index === 2) return "bg-gradient-to-r from-orange-300 to-orange-400 text-white shadow-md";
-  //   return "bg-white text-gray-700 shadow-sm";
-  // };
-
-  // const getPositionIcon = (index: number) => {
-  //   if (index === 0) return "🥇";
-  //   if (index === 1) return "🥈"; 
-  //   if (index === 2) return "🥉";
-  //   return `${index + 1}`;
-  // };
 
   const currentUserIndex = 49; // Assuming current user is at position 50 like in the image
 
@@ -106,9 +92,9 @@ const Leaderboard = () => {
             <div className="flex flex-col items-center">
               <div className="relative mb-2">
                 <img
-                  src={avatars[1] || "https://i.pravatar.cc/100?img=2"}
+                  src={getCurrentLogo()}
                   alt={leaderboard[1]?.name || "User"}
-                  className="w-16 h-16 rounded-full border-4 border-gray-300 shadow-lg"
+                  className="w-16 h-16 rounded-full border-4 border-gray-300 shadow-lg object-cover"
                 />
                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                   2
@@ -126,9 +112,9 @@ const Leaderboard = () => {
             <div className="flex flex-col items-center">
               <div className="relative mb-2">
                 <img
-                  src={avatars[0] || "https://i.pravatar.cc/100?img=1"}
+                  src={getCurrentLogo()}
                   alt={leaderboard[0]?.name || "User"}
-                  className="w-20 h-20 rounded-full border-4 border-yellow-400 shadow-xl"
+                  className="w-20 h-20 rounded-full border-4 border-yellow-400 shadow-xl object-cover"
                 />
                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                   1
@@ -146,9 +132,9 @@ const Leaderboard = () => {
             <div className="flex flex-col items-center">
               <div className="relative mb-2">
                 <img
-                  src={avatars[2] || "https://i.pravatar.cc/100?img=3"}
+                  src={getCurrentLogo()}
                   alt={leaderboard[2]?.name || "User"}
-                  className="w-16 h-16 rounded-full border-4 border-orange-300 shadow-lg"
+                  className="w-16 h-16 rounded-full border-4 border-orange-300 shadow-lg object-cover"
                 />
                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-orange-300 to-orange-400 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                   3
@@ -188,9 +174,9 @@ const Leaderboard = () => {
                 </div>
                 
                 <img
-                  src={avatars[actualIndex % avatars.length] || `https://i.pravatar.cc/100?img=${actualIndex + 1}`}
+                  src={getCurrentLogo()}
                   alt={entry.name || "User"}
-                  className="w-12 h-12 rounded-full mr-4 shadow-sm"
+                  className="w-12 h-12 rounded-full mr-4 shadow-sm object-cover"
                 />
                 
                 <div className="flex-1">

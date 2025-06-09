@@ -30,7 +30,7 @@ const QuizPage = () => {
   const fetchQuestion = async () => {
     setIsLoading(true);
     try {
-      const response = await getNextQuestion(session.sessionId!);
+      const response = await getNextQuestion(session.sessionId!, state.quizCategory, state.quizSubCategory);
 
       const currentQuestion = {
         id: response.id,

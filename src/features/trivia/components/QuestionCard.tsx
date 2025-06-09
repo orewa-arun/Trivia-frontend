@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import { submitAnswer as submitAnswerApi } from "../api/triviaApi";
 import "./NameInput.css";
+import { useNavigate } from "react-router-dom";
 
 interface QuestionCardProps {
   question: string;
@@ -29,10 +30,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   );
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
 
-  const { session, dispatch } = useTriviaSession();
+  const { session, state, dispatch } = useTriviaSession();
 
   const selectedIndexRef = useRef<number>(-1);
   const hasSubmittedRef = useRef<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeLeft(timePerQuestion);
@@ -63,6 +65,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     setSelectedIndex(index);
     selectedIndexRef.current = index;
   };
+
+  if (state.quizSubCategory === "") {
+    navigate("/"); // route for NameInput component
+  }
 
   const submitAnswer = async () => {
     if (hasSubmittedRef.current) return;
@@ -116,15 +122,15 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         if (blinkType === "correct" && selectedIndex === index) {
           baseClasses += " animate-blink-green";
         }
-      } 
+      }
       // Show selected wrong answer in red
-      else if (selectedIndex === index && !isAnswerCorrect) {
+      else if (selectedIndex === index && correctIndex != null) {
         baseClasses += " bg-red-500 text-white border-2 border-red-600";
         // Apply red blink to incorrect selected answer
         if (blinkType === "incorrect") {
           baseClasses += " animate-blink-red";
         }
-      } 
+      }
       // Other options in gray
       else {
         baseClasses += " bg-gray-100 text-gray-500 border border-gray-200";
@@ -144,14 +150,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
   const getOptionIcon = (index: number) => {
     if (!hasSubmittedRef.current) return null;
-    
+
     if (correctIndex === index) {
       return (
         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white">
           ✓
         </span>
       );
-    } else if (selectedIndex === index && !isAnswerCorrect) {
+    } else if (selectedIndex === index && correctIndex != null) {
       return (
         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white">
           ✗
@@ -240,11 +246,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           >
             {isAnswerCorrect ? "Correct!" : "Oops! That's wrong"}
           </div>
-          
+
           {/* Show correct answer when user is wrong */}
           {!isAnswerCorrect && correctIndex !== null && (
             <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded-lg">
-              <span className="font-medium">Correct answer:</span> {options[correctIndex]}
+              <span className="font-medium">Correct answer:</span>{" "}
+              {options[correctIndex]}
             </div>
           )}
         </div>

@@ -3,6 +3,8 @@ export const initialState = {
   adQuestionCount: 0,
   score: 0,
   quizPhase: "QUIZ", // Initial phase of the quiz
+  quizCategory: "IPL",
+  quizSubCategory: ""
 };
 
 export type TriviaState = {
@@ -10,6 +12,8 @@ export type TriviaState = {
   adQuestionCount: number;
   score: number;
   quizPhase: string;
+  quizCategory: string;
+  quizSubCategory: string;
 };
 
 export type TriviaAction = { type: string };
@@ -30,6 +34,13 @@ export const quizReducer = (state: TriviaState, action: TriviaAction) => {
       return { ...state, quizPhase: "LEADERBOARD" };
     case "RESET_QUIZ":
       return initialState;
+
+    case "TEAM_CSK":
+      return { ...state, quizSubCategory: "CSK" };
+    case "TEAM_MI":
+      return { ...state, quizSubCategory: "MI" };
+    case "TEAM_RCB":
+      return { ...state, quizSubCategory: "RCB" };
     default:
       return state;
   }

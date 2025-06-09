@@ -3,7 +3,7 @@ import type { AdSectionType } from "../types";
 import { getAd } from "../api/triviaApi";
 import { useTriviaSession } from "../../../context/TriviaSessionContext";
 import LoadingScreen from "../../../components/LoadingScreen";
-import "../components/NameInput.css"; 
+import "../components/NameInput.css";
 
 const AdSection = () => {
   const [ad, setAd] = useState<AdSectionType | null>(null);
@@ -14,7 +14,7 @@ const AdSection = () => {
   useEffect(() => {
     const loadAd = async () => {
       try {
-        const response = await getAd(1);
+        const response = await getAd(3);
         setAd(response);
         if (response.duration) {
           setTimer(response.duration);
@@ -79,6 +79,10 @@ const AdSection = () => {
         )}
 
         <p className="text-gray-800 text-lg leading-relaxed">{ad.content}</p>
+
+        <p className="text-sm text-gray-600 mt-4 italic">
+          Questions will follow regarding the ad.
+        </p>
       </div>
     </div>
   );

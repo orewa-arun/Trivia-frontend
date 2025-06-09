@@ -16,9 +16,17 @@ export const startSession = async (uid: string, name: string) => {
     });
 };
 
-export const getNextQuestion = async (sessionId: number): Promise<Question> => {
+export const getNextQuestion = async (
+  sessionId: number,
+  category: string,
+  subCategory: string
+): Promise<Question> => {
   return axios
-    .post(`${API_BASE_URL}/trivia/next?session_id=${sessionId}`)
+    .post(`${API_BASE_URL}/trivia/next`, {
+      session_id: sessionId,
+      category: category,
+      sub_category: subCategory,
+    })
     .then((response) => {
       console.log("Next Question Response:", response.data);
       return response.data;
@@ -82,7 +90,7 @@ export const completeSession = async (sessionId: number) => {
     .catch((error) => {
       console.error("Error completing session:", error);
     });
-}
+};
 
 export const getLeaderboard = async () => {
   return axios
@@ -94,4 +102,4 @@ export const getLeaderboard = async () => {
     .catch((error) => {
       console.error("Error fetching leaderboard:", error);
     });
-}
+};
